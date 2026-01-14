@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Nuffield Health Support</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: #f3f8f6;
+        }
+
+        header {
+            background: #2a6f55;
+            padding: 20px;
+            text-align: center;
+            color: white;
+            font-size: 22px;
+            font-weight: bold;
+        }
+
+        .hero {
+            text-align: center;
+            padding: 40px;
+        }
+
+        .hero img {
+            width: 120px;
+            margin-bottom: 20px;
+        }
+
+        .info-box {
+            max-width: 700px;
+            background: white;
+            padding: 20px;
+            margin: 0 auto;
+            border-radius: 10px;
+            text-align: center;
+            font-size: 18px;
+            color: #444;
+            box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        Nuffield Health • Customer Support
+    </header>
+
+    <div class="hero">
+        <img src="https://cdn-icons-png.flaticon.com/512/2966/2966327.png" alt="Hospital Icon">
+        <div class="info-box">
+            Welcome to Nuffield Health Support.
+            <br /><br />
+            You can use the chat button (bottom-right) to ask questions or book an appointment.
+            <br /><br />
+            Our support bot will assist you shortly.
+        </div>
+    </div>
+<script type='text/javascript'>
+    function startCxoneChat(firstName, transcriptId, skillId) {
+        console.log('Entered into startCxoneChat');
+        (function (n, u) {
+            window.CXoneDfo = n,
+                window[n] = window[n] || function () { (window[n].q = window[n].q || []).push(arguments) }, window[n].u = u,
+                e = document.createElement("script"), e.type = "module", e.src = u + "?" + Math.round(Date.now() / 1e3 / 3600),
+                document.head.appendChild(e)
+        })('cxone', 'https://web-modules-de-uk1.niceincontact.com/loader/1/loader.js');
+
+        cxone('init', '1152');
+        cxone('chat', 'init', 1152, 'chat_77cdeb00-0c80-41cb-874b-0e7df1067e0c'); //CXOne LIVE CHAT Channel ID use CHAT for Digital and GUIDE for GUIDE..
+        // Set Customer's name
+        cxone('chat', 'setCustomerName', firstName);
+        console.log('startCxoneChat First checkpoint');
+        // Set Custom Fields
+        cxone('chat', 'setCustomField', 'nuffskill', skillId); //Can be Offline / General / Cancellations
+        cxone('chat', 'setCustomField', 'sfticketid', '1234-rteqw-1234-789dfty'); //salesforce case ID
+        cxone('chat', 'setCustomField', 'sftranscriptid', transcriptId); //NOT USED
+        cxone('chat', 'sendFirstMessageAutomatically', 'Welcome to Nuffield Support. How can I help you?');
+
+        console.log('startCxoneChat Second checkpoint');
+
+        cxone('chat', 'chat', 'hideSystemMessages');
+        cxone('chat', 'hideSendTranscript');
+        cxone('chat', 'enableChatAlwaysOnline');
+        cxone('chat', 'hidePreSurvey');
+        cxone('chat', 'openChatWindow');
+
+        cxone('chat', 'autoStartSession');
+        console.log('startCxoneChat Third checkpoint');
+
+    }
+
+    function getSkillId(messageText) {
+        console.log('getting the skill id for -' + messageText);
+        const text = messageText.toLowerCase();
+
+        if (text.includes('appointment cancellation')) {
+            return '31531982';
+        }
+
+        if (text.includes('appointment booking')) {
+            return '29204808';
+        }
+
+        return '29204809';
+    }
+
+
+    function initEmbeddedMessaging() {
+        let firstName = "";
+        let transcriptId = "";
+        let caseNumber = "";
+        let SkillId = "";
+        try {
+            embeddedservice_bootstrap.settings.language = 'en_US'; // For example, enter 'en' or 'en-US'
+
+            // This event listner is triggered when the pre-chat form is submitted
+            window.addEventListener("onEmbeddedMessagingPreChatSubmitted", ({ detail }) => {
+                const { _firstName } = detail.prechatSubmitFields;
+                firstName = _firstName;;
+
+            });
+
+            const IDLE_TIME =  1 * 60 * 1000; // 5 minutes
+            let idleTimer = null;
+
+            // This event listner is triggered when a message is sent in the chat
+            window.addEventListener("onEmbeddedMessageSent", (event) => {
+
+                clearTimeout(idleTimer);
+
+                idleTimer = setTimeout(() => {
+                    embeddedservice_bootstrap.userVerificationAPI.clearSession(true);
+                }, IDLE_TIME);
+
+                const payload = JSON.parse(event.detail.conversationEntry.entryPayload);
+
+                //Extract text
+                const messageText = payload.abstractMessage?.staticContent?.text;
+
+                console.log("Extracted text:", messageText);
+                // Fetching transcript id
+                if (messageText.includes("welcome to Nuffield Customer Support")) {
+                    const match = messageText.match(/Your transcript ID is\s*([A-Za-z0-9-]+)/i);
+                    if (match && match[1]) {
+                        transcriptId = match[1].trim();
+                        console.log('Transcript Id - ' + transcriptId);
+                    }
+                }
+
+                if (messageText.includes('Transferring the chat to a support executive')) {
+                    skillId = getSkillId(messageText);
+                    console.log("Skill Id :" + skillId);
+                    startCxoneChat(firstName, transcriptId, skillId);
+                    // Hide the embedded messaging window after 4 seconds);
+                    setTimeout(() => {
+                        console.log('Closing the agentforce chat window');
+                        embeddedservice_bootstrap.userVerificationAPI.clearSession(true)
+                    }, 4000);
+
+                }
+
+
+            });
+           embeddedservice_bootstrap.init(
+              '00D8E0000008ucN',
+              'Agentforce_Customer_Support',
+              'https://nuffieldhealth-crm--crmuat.sandbox.my.site.com/ESWAgentforceCustomerSu1768388929876',
+              {
+                scrt2URL: 'https://nuffieldhealth-crm--crmuat.sandbox.my.salesforce-scrt.com'
+              }
+          );
+        } catch (err) {
+            console.error('Error loading Embedded Messaging: ', err);
+        }
+    };
+</script>
+<script type='text/javascript' src='https://nuffieldhealth-crm--crmuat.sandbox.my.site.com/ESWAgentforceCustomerSu1768388929876/assets/js/bootstrap.min.js' onload='initEmbeddedMessaging()'></script>
+
+</html>
