@@ -81,6 +81,7 @@
         cxone('chat', 'setCustomField', 'sfticketid', '1234-rteqw-1234-789dfty'); //salesforce case ID
         cxone('chat', 'setCustomField', 'sftranscriptid', transcriptId); //NOT USED
         cxone('chat', 'sendFirstMessageAutomatically', 'Welcome to Nuffield Support. How can I help you?');
+        cxone('chat', 'setCustomCss', '[data-selector-item="START_NEW_CHAT"] {display: none !important;};'); 
 
         console.log('startCxoneChat Second checkpoint');
 
@@ -181,5 +182,4 @@
     };
 </script>
 <script type='text/javascript' src='https://nuffieldhealth-crm--crmuat.sandbox.my.site.com/ESWAgentforceCustomerSu1768388929876/assets/js/bootstrap.min.js' onload='initEmbeddedMessaging()'></script>
-
 </html>
