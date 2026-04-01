@@ -165,21 +165,23 @@
                     }, 4000);
 
                 }
-
+				if (messageText.includes('Confidential advice and support for your mental health is available for free')) {
+					    embeddedservice_bootstrap.utilAPI.sendTextMessage("end");
+				}
 
             });
-           embeddedservice_bootstrap.init(
-              '00D8E0000008ucN',
-              'Agentforce_Customer_Support',
-              'https://nuffieldhealth-crm--crmuat.sandbox.my.site.com/ESWAgentforceCustomerSu1768388929876',
-              {
-                scrt2URL: 'https://nuffieldhealth-crm--crmuat.sandbox.my.salesforce-scrt.com'
-              }
-          );
+          	embeddedservice_bootstrap.init(
+				'00D8E0000008ucN',
+				'Agentforce_Customer_Support',
+				'https://nuffieldhealth-crm--crmuat.sandbox.my.site.com/ESWAgentforceCustomerSu1768388929876',
+				{
+					scrt2URL: 'https://nuffieldhealth-crm--crmuat.sandbox.my.salesforce-scrt.com'
+				}
+			);
         } catch (err) {
             console.error('Error loading Embedded Messaging: ', err);
         }
     };
 </script>
-<script type='text/javascript' src='https://nuffieldhealth-crm--crmuat.sandbox.my.site.com/ESWAgentforceCustomerSu1768388929876/assets/js/bootstrap.min.js' onload='initEmbeddedMessaging()'></script>
+	<script type='text/javascript' src='https://nuffieldhealth-crm--crmuat.sandbox.my.site.com/ESWAgentforceCustomerSu1768388929876/assets/js/bootstrap.min.js' onload='initEmbeddedMessaging()'></script>
 </html>
