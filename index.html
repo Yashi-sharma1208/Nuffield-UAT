@@ -146,13 +146,13 @@
 
                 console.log("Extracted text:", messageText);
                 // Fetching transcript id
-                if (messageText.includes("welcome to Nuffield Customer Support")) {
-                    const match = messageText.match(/Your transcript ID is\s*([A-Za-z0-9-]+)/i);
-                    if (match && match[1]) {
-                        transcriptId = match[1].trim();
-                        console.log('Transcript Id - ' + transcriptId);
-                    }
-                }
+                if (!transcriptId && messageText && messageText.toLowerCase().includes("your chat id")) {
+    				const match = messageText.match(/Your chat ID is\s*([A-Za-z0-9-]+)/i);
+    				if (match && match[1]) {
+        				transcriptId = match[1].trim();
+        				console.log('Transcript Id - ' + transcriptId);
+    				}
+				}
 
                 if (messageText.includes('Transferring the chat to a support executive')) {
                     skillId = getSkillId(messageText);
